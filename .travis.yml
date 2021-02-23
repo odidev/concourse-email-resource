@@ -1,5 +1,10 @@
 sudo: required
 
+jobs:
+  - arch: amd64
+  - arch: arm64-graviton2
+    virt: lxd
+    group: edge
 language: python
 install: true
 
@@ -9,6 +14,7 @@ services:
 script: true
 
 after_success:
+  - if [ "${TRAVIS_CPU_ARCH}" == "arm64" ]; then TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}_arm64; fi
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
     docker build -t $TRAVIS_REPO_SLUG .;
     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
